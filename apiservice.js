@@ -5,8 +5,6 @@ var app = angular.module('demoApp');
 
 app.service('APIService', ['$rootScope', '$resource', 'APIConfig', '$q', '$http', function APIServiceProvider($rootScope, $resource, APIConfig, $q, $http) {
 
-    // console.log('service');
-
     var self = this;
     var service = '';
     var filter = {};
@@ -14,8 +12,6 @@ app.service('APIService', ['$rootScope', '$resource', 'APIConfig', '$q', '$http'
     var tableid = ':id';
     self.setAuth = function () {
         if ($rootScope.oauth.access_token) {
-            // console.log('setAuth ok');
-
             var login = $rootScope.oauth;
             $http.defaults.headers.common.Authorization = 'Bearer ' + $rootScope.oauth.access_token;
             self.refresh_token = login.refresh_token;
@@ -23,11 +19,8 @@ app.service('APIService', ['$rootScope', '$resource', 'APIConfig', '$q', '$http'
         }
     };
 
-
     self.getResource = function () {
-
         !tableid ? tableid = ':id' : null;
-
         return $resource(
             APIConfig.url + '/' + service + '/' + tableid,
             filter,
@@ -51,24 +44,25 @@ app.service('APIService', ['$rootScope', '$resource', 'APIConfig', '$q', '$http'
         filter = name;
         return self;
     };
+    
     self.id = function (id) {
         tableid = id;
         return self;
     };
+    
     self.data = function (datalocal) {
         data = datalocal;
         return self;
     };
+    
     self.clearAll = function () {
-
         self.service('');
         self.id(':id');
         self.filter({});
         self.data({});
     };
+    
     self.get = function () {
-
-
         var deferred = $q.defer();
         var res = this.getResource();
         res.get(function (response) {
@@ -79,6 +73,7 @@ app.service('APIService', ['$rootScope', '$resource', 'APIConfig', '$q', '$http'
         self.clearAll();
         return deferred.promise;
     };
+    
     self.update = function () {
         var deferred = $q.defer();
         var res = this.getResource();
@@ -126,28 +121,6 @@ app.service('APIService', ['$rootScope', '$resource', 'APIConfig', '$q', '$http'
         self.clearAll();
         return deferred.promise;
     };
-    //APIService.get('note').id(1);
-
-    this.setRootScope = function (data) {
-        // console.info('data', data);
-        $rootScope.loggedin = true;
-        $rootScope.oauth = data;
-    };
-
-    self.checkRights = function ($location, APIFactory) {
-        console.log('service - checkrights');
-        // console.log($location.path());
-
-        // console.log($rootScope.oauth.access_token);
-        // console.log(APIFactory.hasUserRight($location.path()));
-
-        if ($rootScope.oauth.access_token && !APIFactory.hasUserRight($location.path())) {
-            // pre !== undefined ? $location.path(pre.$$route.originalPath) : null;
-            $location.path('/home');
-
-        }
-    };
-
 
 }]);
 
